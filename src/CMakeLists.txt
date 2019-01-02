@@ -150,7 +150,12 @@ configure_file(layer_declaration.h.in ${CMAKE_CURRENT_BINARY_DIR}/layer_declarat
 configure_file(layer_registry.h.in ${CMAKE_CURRENT_BINARY_DIR}/layer_registry.h)
 configure_file(layer_type_enum.h.in ${CMAKE_CURRENT_BINARY_DIR}/layer_type_enum.h)
 
-add_library(ncnn STATIC ${ncnn_SRCS})
+#add_library(ncnn STATIC ${ncnn_SRCS})
+add_library(ncnn SHARED ${ncnn_SRCS})
+add_library(ncnn_static STATIC ${ncnn_SRCS})
+set_target_properties(ncnn_static PROPERTIES OUTPUT_NAME "ncnn")
+set_target_properties(ncnn PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(ncnn_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 
 if(NCNN_OPENMP AND OpenMP_CXX_FOUND)
     if(NCNN_CMAKE_VERBOSE)
@@ -163,7 +168,8 @@ if(COVERAGE)
     target_compile_options(ncnn PRIVATE --coverage)
 endif()
 
-install(TARGETS ncnn ARCHIVE DESTINATION lib)
+#install(TARGETS ncnn ARCHIVE DESTINATION lib)
+install(TARGETS ncnn ncnn_static ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 install(FILES
     allocator.h
     blob.h
